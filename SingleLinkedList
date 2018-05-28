@@ -1,0 +1,284 @@
+using System;
+
+public class Node
+{
+	public int Data { get; set; }
+	public Node Next { get; set; }
+	
+	public Node()
+	{
+	}
+	
+	public Node(int data)
+	{
+		Data = data;
+	}
+}
+
+public class SingleLinkedList
+{
+	public Node Head { get; set; }
+	
+	public SingleLinkedList()
+	{
+	}
+	
+	public SingleLinkedList(int data)
+	{
+		InsertNodeAtTail(data);
+	}
+	
+	public void InsertNodeAtTail(int data)  // Same as AddNextNode
+	{
+		var node = new Node(data);
+		if(Head == null)
+		{
+			Head = node;
+		}
+		else
+		{
+			var temp = Head;
+			while(temp != null)
+			{
+				if(temp.Next == null)
+				{
+					temp.Next = node;
+					break;
+				}
+				
+				temp = temp.Next;
+			}
+		}
+	}
+	
+	public void InsertNodeAtHead(int data)
+	{
+		var node = new Node(data);
+		if(Head == null)
+		{
+			Head = node;
+		}
+		else
+		{
+			var temp = Head;
+			Head = node;
+			Head.Next = temp;
+		}
+	}
+	
+	public void InsertNodeAtNthPosition(int data, int position)  // 0th position means HEAD
+	{
+		int count = 0;
+		if(position == 0)
+		{
+			InsertNodeAtHead(data);
+		}
+		else
+		{
+			var current = Head;
+			Node previous = Head;
+			while(current != null)
+			{
+				if(count == position)
+				{			
+					var node = new Node(data);
+					previous.Next = node;	
+					node.Next = current;
+				}
+				
+				count++;
+				previous = current;
+				current = current.Next;
+			}
+		}
+	}
+	
+    public Node Reverse(Node head)
+    {
+        if (head == null || head.Next == null)
+        {
+            return head;
+        }
+
+        Node newHead = Reverse(head.Next); // reverse all but first
+        head.Next.Next = head; // make original second point at first
+        head.Next = null; // make original first point at nothing
+
+        return newHead;
+    }
+	
+	public void DeleteNode(int position)
+	{
+		if(position == 0)
+		{
+			Head = Head.Next;
+			return;
+		}
+		
+		int count = 0;
+		var current = Head;
+		var prev = Head;
+		
+		while(current != null)
+		{
+			if(count == position)
+			{
+				prev.Next = current.Next;
+				break;
+			}
+			
+			prev = current;
+			current = current.Next;
+			count++;
+				
+		}
+	}
+	
+	public void PrintNodesV1() 	// Without Recursion
+	{		
+		var current = Head;
+		while(current != null)
+		{
+			Console.Write(current.Data);
+			Console.Write("->");
+			current = current.Next;
+		}
+		
+		Console.Write("NULL");
+	}
+	
+	public void PrintNodesV2(Node node)   // Using Recursion
+	{		
+		if(node == null)
+			return;
+		
+		Console.Write(node.Data);
+		Console.Write("->");
+		
+		if(node.Next == null)
+			Console.Write("NULL");
+		
+		PrintNodesV2(node.Next);
+	}
+	
+	public void PrintNodesReverseV1(Node node) // Using Recursion
+	{
+		if (node == null)
+			return;
+		
+		PrintNodesReverseV1(node.Next);
+		
+		Console.Write(node.Data);
+		Console.Write("->");
+		
+		if(node == Head)
+			Console.Write("NULL");
+	}
+	
+	public void PrintNodesReverseV2()
+	{		
+		if(Head == null)
+			return;
+		
+		var current = Head;
+		Node previous = Head;
+		
+		while (current != null)
+		{
+			if (current.Next == null)
+			{
+				Console.Write(current.Data);
+				Console.Write("->");
+				previous.Next = null;
+				
+				if (current == Head)
+				{
+					Console.Write("NULL");
+					break;
+				}
+				
+				PrintNodesReverseV2();
+			}
+			
+			previous = current;
+			current = current.Next;
+		}
+	}
+	
+}
+
+					
+public class Program
+{
+	public static void Main()
+	{
+		Console.WriteLine("--Create first Node of SingleLinkedList--");
+		Console.WriteLine();
+		
+		var linkedList = new SingleLinkedList(3);
+		
+		Console.WriteLine("--PrintNodes--");
+		linkedList.PrintNodesV1();
+		Console.WriteLine();
+		Console.WriteLine();
+		
+		Console.WriteLine("------------InsertNodeAtTail--------------");
+		Console.WriteLine();
+		
+		linkedList.InsertNodeAtTail(4);
+		linkedList.InsertNodeAtTail(1);
+		linkedList.InsertNodeAtTail(2);
+		
+		Console.WriteLine("--PrintNodes--");
+		linkedList.PrintNodesV1();
+		Console.WriteLine();
+		Console.WriteLine();
+		
+		Console.WriteLine("------------InsertNodeAtHead--------------");
+		Console.WriteLine();
+		
+		linkedList.InsertNodeAtHead(6);
+		
+		Console.WriteLine("--PrintNodes--");
+		linkedList.PrintNodesV1();
+		Console.WriteLine();
+		Console.WriteLine();
+		
+		Console.WriteLine("------------InsertNodeAtNthPosition(2,2)---");
+		Console.WriteLine();
+		
+		linkedList.InsertNodeAtNthPosition(2, 2);
+		linkedList.PrintNodesV1();
+		Console.WriteLine();
+		Console.WriteLine();
+		
+		Console.WriteLine("-------------DeleteNode (position = 1)--");
+		linkedList.DeleteNode(1);
+		linkedList.PrintNodesV1();
+		Console.WriteLine();
+		Console.WriteLine();
+		
+		Console.WriteLine("--PrintNodesV1--");
+		linkedList.PrintNodesV1();
+		Console.WriteLine();
+		Console.WriteLine();
+		
+		Console.WriteLine("--PrintNodesV2--");
+		linkedList.PrintNodesV2(linkedList.Head);
+		Console.WriteLine();
+		Console.WriteLine();
+		
+		Console.WriteLine("--PrintNodesReverseV1--");
+		linkedList.PrintNodesReverseV1(linkedList.Head);
+		Console.WriteLine();
+		Console.WriteLine();
+		
+        Console.WriteLine("------------Reverse LinkedList---");
+        Console.WriteLine();
+
+        var node = linkedList.Reverse(linkedList.Head);
+        linkedList.PrintNodesV2(node);
+        Console.WriteLine();
+        Console.WriteLine();
+	}
+}
